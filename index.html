@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TEKK-16 Hardtekk</title>
+<meta name="description" content="TEKK-16 von artstekke: Hardtekk-Groovebox im Browser. Beats bauen, Kick formen, Kaoss-Pad spielen. Ohne Konto, ohne Installation.">
+<meta name="theme-color" content="#0b0a0d">
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: ein Poster-Hero mit Kick-Puls, darunter Anleitung, Funktionen, Szene-Wissen, Recht */
+:root{--bg:#0b0a0d;--bg2:#141217;--line:#2a262e;--fg:#f1ebe6;--mute:#a79fa8;--hot:#ff4a1c;--hot2:#ffb199;--ok:#c9ff4a;
+--disp:Impact,"Haettenschweiler","Arial Narrow Bold","Arial Black",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--body:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.w{max-width:1040px;margin:0 auto}
+a{color:var(--hot2)}
+h1,h2,h3{font-family:var(--disp);font-weight:400;letter-spacing:.02em;text-transform:uppercase;line-height:.95;margin:0;text-wrap:balance}
+h2{font-size:clamp(34px,6vw,56px)}
+h3{font-size:22px;line-height:1.1}
+.tag{font:12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--hot)}
+nav{display:flex;gap:18px;align-items:center;justify-content:space-between;padding:16px 0;flex-wrap:wrap}
+nav b{font-family:var(--disp);font-size:24px;font-weight:400;letter-spacing:.05em;color:var(--hot)}
+nav div{display:flex;gap:16px;flex-wrap:wrap;font:13px var(--mono)}
+nav a{color:var(--mute);text-decoration:none}nav a:hover{color:var(--fg)}
+.hero{padding:44px 0 56px;display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+.hero>*{min-width:0}
+.hero h1{font-size:clamp(48px,12.5vw,150px);color:var(--fg)}
+.hero h1 em{font-style:normal;color:var(--hot)}
+.hero p{max-width:56ch;color:var(--mute);font-size:18px;margin:0}
+.go{display:inline-flex;align-items:center;gap:14px;background:var(--hot);color:#140805;font:400 30px var(--disp);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;padding:18px 34px;border-radius:4px;box-shadow:0 6px 0 #8c2208;transition:transform .08s,box-shadow .08s}
+.go:hover{transform:translateY(2px);box-shadow:0 4px 0 #8c2208}
+.go:active{transform:translateY(6px);box-shadow:0 0 0 #8c2208}
+.go:focus-visible,a:focus-visible{outline:3px solid var(--ok);outline-offset:3px}
+.cta{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.cta small{font:12px var(--mono);color:var(--mute);max-width:30ch}
+.pulse{display:flex;align-items:flex-end;gap:5px;height:84px;border-bottom:2px solid var(--line)}
+.pulse i{flex:1;min-width:0;background:var(--hot);height:12%;transform-origin:bottom;animation:kick .686s steps(1,end) infinite}
+.pulse i:nth-child(4n+1){animation-name:kickBig;height:100%}
+.pulse i:nth-child(4n+3){height:36%;background:var(--hot2)}
+.pulse i:nth-child(2n){height:14%;background:var(--line)}
+@keyframes kickBig{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+@keyframes kick{0%{opacity:1}50%{opacity:.6}100%{opacity:1}}
+.bpm{font:12px var(--mono);color:var(--mute);display:flex;justify-content:space-between}
+section{padding:56px 0;border-top:1px solid var(--line)}
+section>.tag{display:block;margin-bottom:10px}
+.lead{color:var(--mute);max-width:62ch;margin:14px 0 0}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:30px;padding:0;list-style:none;counter-reset:s}
+.steps li{background:var(--bg2);border:1px solid var(--line);padding:20px;border-radius:6px;counter-increment:s;min-width:0}
+.steps li::before{content:counter(s);font:400 40px var(--disp);color:var(--hot);display:block;line-height:1}
+.steps h3{margin:8px 0 6px}
+.steps p{margin:0;color:var(--mute);font-size:15px}
+.note{margin-top:20px;padding:16px 18px;border-left:4px solid var(--ok);background:var(--bg2);color:var(--fg);font-size:15px;max-width:72ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:30px}
+.grid div{background:var(--bg);padding:20px;min-width:0}
+.grid p{margin:6px 0 0;color:var(--mute);font-size:15px}
+.scene{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:36px;margin-top:30px}
+@media(max-width:760px){.scene{grid-template-columns:1fr}}
+.scene p{margin:0 0 14px;color:var(--mute)}
+.scene p b{color:var(--fg)}
+table{width:100%;border-collapse:collapse;font:14px var(--mono)}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--hot);font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:12px}
+.tw{overflow-x:auto}
+.faq details{border-bottom:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:600}
+.faq p{color:var(--mute);margin:10px 0 0;max-width:64ch}
+.legal{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;margin-top:30px}
+.legal h3{margin-bottom:10px}
+.legal p,.legal li{color:var(--mute);font-size:14.5px;margin:0 0 10px}
+.legal ul{padding-left:18px;margin:0}
+.ph{background:#ffe9a8;color:#2b1d00;padding:0 4px;border-radius:2px;font-family:var(--mono);font-size:13px}
+.warn{margin-top:30px;border:1px solid var(--hot);padding:16px 18px;border-radius:6px;font-size:15px}
+.warn b{color:var(--hot)}
+footer{padding:32px 0 calc(40px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);color:var(--mute);font:12px var(--mono);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+@media(prefers-reduced-motion:reduce){.pulse i{animation:none}html{scroll-behavior:auto}}
+
+/* Upgrade: Glow, Glitch, Ticker, Mini-Groovebox, Visualizer, Feedback */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+.glow{position:absolute;left:50%;top:-120px;width:min(900px,100%);height:620px;transform:translateX(-50%);background:radial-gradient(closest-side,#ff4a1c66,#ff4a1c00);opacity:.5;pointer-events:none;transition:opacity .09s}
+body.thump .glow{opacity:1}
+.top{position:relative}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:#0b0a0dd9;backdrop-filter:blur(8px);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line)}
+nav .mini{background:var(--hot);color:#140805;padding:6px 14px;border-radius:3px;font:400 16px var(--disp);letter-spacing:.06em;text-transform:uppercase}
+nav .mini:hover{color:#140805;background:#ff6a3d}
+.hero{position:relative}
+body{overflow-x:clip}
+.glow{max-width:100vw}
+.hero h1{position:relative;text-shadow:3px 0 #00e5ff55,-3px 0 #ff2bd655;animation:glitch 5s steps(1,end) infinite}
+@keyframes glitch{0%,92%,100%{text-shadow:3px 0 #00e5ff55,-3px 0 #ff2bd655;transform:none}93%{text-shadow:-8px 0 #00e5ffaa,8px 0 #ff2bd6aa;transform:translateX(4px)}95%{text-shadow:6px 0 #00e5ffaa,-6px 0 #ff2bd6aa;transform:translateX(-5px) skewX(-3deg)}97%{text-shadow:3px 0 #00e5ff55,-3px 0 #ff2bd655;transform:none}}
+.go{box-shadow:0 6px 0 #8c2208,0 0 40px #ff4a1c77}
+body.thump .go{box-shadow:0 6px 0 #8c2208,0 0 70px #ff4a1cdd}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.stats div{background:var(--bg);padding:14px 16px}
+.stats b{display:block;font:400 clamp(30px,5vw,46px) var(--disp);color:var(--fg);line-height:1}
+.stats span{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.hazard{height:14px;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));background:repeating-linear-gradient(-45deg,var(--hot) 0 16px,#140805 16px 32px)}
+.ticker{overflow:hidden;white-space:nowrap;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));background:var(--hot);color:#140805;font:400 22px var(--disp);letter-spacing:.08em;text-transform:uppercase;padding:8px 0}
+.ticker div{display:inline-block;padding-left:100%;animation:tick 26s linear infinite}
+@keyframes tick{to{transform:translateX(-100%)}}
+.demo{background:linear-gradient(160deg,#1a1417,#0f0c10);border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:30px;box-shadow:0 30px 80px #000a,inset 0 1px 0 #ffffff14}
+.dbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.dbar button.play{width:60px;height:52px;border-radius:6px;border:1px solid #000;background:linear-gradient(#2e2329,#17121a);color:#fff;font-size:22px;cursor:pointer;box-shadow:0 3px 0 #000a}
+.dbar button.play.on{background:linear-gradient(#ff6a3d,#c5300f);color:#140805}
+.dbar label{font:12px var(--mono);color:var(--mute);display:flex;gap:10px;align-items:center}
+.dbar output{font:400 30px var(--disp);color:var(--fg);min-width:3ch}
+input[type=range]{accent-color:var(--hot);width:min(260px,50vw)}
+canvas#viz{width:100%;height:70px;display:block;background:#07060a;border-radius:6px;margin-bottom:12px}
+.row{display:grid;grid-template-columns:62px repeat(16,minmax(0,1fr));gap:5px;margin-bottom:6px;align-items:center}
+.row span{font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.pad{aspect-ratio:1/1.15;border:1px solid #000;border-radius:5px;background:linear-gradient(#2c262b,#141014);cursor:pointer;padding:0;position:relative;box-shadow:0 3px 0 #000a,inset 0 1px 0 #ffffff14}
+.pad:nth-child(4n+2){background:linear-gradient(#332b31,#191318)}
+.pad[aria-pressed=true]{background:linear-gradient(var(--c),color-mix(in srgb,var(--c) 60%,#000));box-shadow:0 3px 0 #000a,0 0 16px -2px var(--c)}
+.pad.now{outline:2px solid #fff;outline-offset:1px}
+.hint{font:12px var(--mono);color:var(--mute);margin:10px 0 0}
+@media(max-width:640px){.row{grid-template-columns:44px repeat(8,minmax(0,1fr))}.row .pad:nth-child(n+10){display:none}.row span{font-size:10px}}
+.steps li,.grid div{transition:transform .15s,background .15s}
+.steps li:hover{transform:translateY(-4px);border-color:var(--hot)}
+.grid div:hover{background:#1a1317}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:999px;font-size:14px;background:var(--bg2);color:var(--mute);transition:.12s}
+.chips input:checked+span{background:var(--hot);color:#140805;border-color:var(--hot)}
+.chips input:focus-visible+span{outline:3px solid var(--ok);outline-offset:2px}
+.fb{display:grid;gap:12px;max-width:680px;margin-top:10px}
+.fb select,.fb textarea{width:100%;background:var(--bg2);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:12px;font:16px var(--body)}
+.fb textarea{min-height:130px;resize:vertical}
+.fb .btns{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-block;border:0;border-radius:4px;padding:14px 22px;font:400 20px var(--disp);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;background:var(--hot);color:#140805;text-decoration:none;box-shadow:0 4px 0 #8c2208}
+.btn.alt{background:var(--bg2);color:var(--fg);border:1px solid var(--line);box-shadow:none}
+.fb small{font:12px var(--mono);color:var(--mute)}
+#fbmsg{font:13px var(--mono);color:var(--ok);min-height:1.2em}
+@media(prefers-reduced-motion:reduce){.hero h1,.ticker div{animation:none}.ticker div{padding-left:0}}
+</style>
+</head><body>
+<div class="w">
+<nav><b>TEKK-16 <small style="font:12px var(--mono);letter-spacing:.12em;color:var(--mute);text-transform:none">by artstekke</small></b><div><a href="#demo">Probier's</a><a href="#funktionen">Funktionen</a><a href="#szene">Hardtekk</a><a href="#ideen">Ideen</a><a href="#recht">Recht</a><a class="mini" href="app.html">Start ▶</a></div></nav>
+
+<header class="hero">
+  <div class="glow" aria-hidden="true"></div>
+  <span class="tag">Hardtekk-Groovebox von artstekke · läuft im Browser</span>
+  <h1>Bau den<br><em>Hardtekk.</em></h1>
+  <p>Harte Kicks, rollender Reverse-Bass, Kaoss-Pad und Sample-Remix. Alles in einer Seite, ohne Konto und ohne Installation.</p>
+  <div class="cta">
+    <a class="go" href="app.html">Start ▶</a>
+    <a class="btn alt" href="#demo">Erst kurz ausprobieren</a>
+  </div>
+  <div class="stats" aria-label="Eckdaten">
+    <div><b>11</b><span>Parts</span></div><div><b>16</b><span>Patterns</span></div><div><b>200</b><span>BPM max</span></div><div><b>0</b><span>fertige Samples</span></div>
+  </div>
+</header>
+<div class="hazard" aria-hidden="true"></div>
+<div class="ticker" aria-hidden="true"><div>Hardtekk · 175 BPM · Reverse Bass · Verzerrter Kick · Kaoss-Pad · Sample-Remix · Rave · Schranz · Free Party · Hardtekk · 175 BPM · Reverse Bass · Verzerrter Kick · Kaoss-Pad · Sample-Remix · Rave · Schranz · Free Party ·</div></div>
+
+<section id="demo">
+  <span class="tag">Direkt ausprobieren</span>
+  <h2>Mini-Groovebox</h2>
+  <p class="lead">Tippe auf Play und setze Pads. Alle Klänge werden live erzeugt. Die ganze Groovebox kann viel mehr.</p>
+  <div class="demo">
+    <div class="dbar">
+      <button class="play" id="dplay" aria-label="Play und Stop">▶</button>
+      <label>Tempo <input type="range" id="dbpm" min="150" max="200" value="175" aria-label="Tempo"><output id="dbpmv">175</output></label>
+      <button class="btn alt" id="dclr" type="button" style="padding:10px 16px;font-size:16px">Leeren</button>
+      <button class="btn alt" id="dprs" type="button" style="padding:10px 16px;font-size:16px">Hardtekk-Beat</button>
+    </div>
+    <canvas id="viz" aria-hidden="true"></canvas>
+    <div id="dgrid"></div>
+    <p class="hint">Tipp: Der Bass liegt auf den Zählzeiten zwischen den Kicks. Das ist der rollende Reverse-Bass.</p>
+  </div>
+</section>
+<section id="start">
+  <span class="tag">Erste 60 Sekunden</span>
+  <h2>So startest du</h2>
+  <ol class="steps">
+    <li><h3>Start tippen</h3><p>Die Groovebox öffnet sich. Beim ersten Antippen schaltet der Browser den Ton frei.</p></li>
+    <li><h3>Beat hören</h3><p>Wähle oben ein Preset wie „Hardtekk Standard" und tippe auf Play. Mit „Beat generieren" kommt ein neuer Beat auf Knopfdruck.</p></li>
+    <li><h3>Pads setzen</h3><p>Wähle einen Part (Kick, Snare, Bass …). Die 16 Pads sind die Steps. Einmal tippen = Schlag, nochmal = Akzent, nochmal = Ratsche.</p></li>
+    <li><h3>Sound formen</h3><p>Drehe die Regler zum Part. Kick-Designer, Synth, Effekte und das Kaoss-Pad verändern den Sound live.</p></li>
+  </ol>
+  <p class="note"><b>Kein Ton?</b> Stumm-Schalter am iPhone oder iPad ausschalten und die Lautstärke hochdrehen. Auf dem Home-Bildschirm: In Safari auf Teilen tippen, dann „Zum Home-Bildschirm". So startet die Groovebox wie eine App.</p>
+</section>
+
+<section id="funktionen">
+  <span class="tag">Was drin ist</span>
+  <h2>Funktionen</h2>
+  <p class="lead">Aufgebaut wie ein Groovebox-Pult: Part wählen, Regler drehen, Pads tippen. Alle Klänge entstehen live im Gerät, es werden keine fertigen Samples abgespielt.</p>
+  <div class="grid">
+    <div><h3>11 Parts</h3><p>Kick, Snare, Clap, zwei Hats, Perc, Bass, Synth, Rumble, FX und Sample.</p></div>
+    <div><h3>Kick-Designer</h3><p>Tiefe, Länge, Drive, Klick und Sub für den verzerrten Hardtekk-Kick.</p></div>
+    <div><h3>16 Patterns</h3><p>Kopieren, einfügen, löschen. Dazu Song-Modus zum Aneinanderreihen.</p></div>
+    <div><h3>Kaoss-Pad</h3><p>XY-Feld mit Filter, Delay, Reverb, Distortion, Crusher, Gater und mehr. Mehrere Finger gleichzeitig.</p></div>
+    <div><h3>Sample-Remix</h3><p>Lade einen eigenen Song. Die Seite erkennt Tempo und ersten Schlag selbst und schneidet Chops.</p></div>
+    <div><h3>Live spielen</h3><p>Trigger, Keyboard mit Tonleitern und Akkorden, Part-Mute, Step-Jump, Roll, Fill und Build-Up.</p></div>
+    <div><h3>Part-Regler</h3><p>Level, Tone, Pan und Drive für jeden Part, mit Reset pro Part.</p></div>
+    <div><h3>Motion</h3><p>Kaoss-Bewegungen aufnehmen und im Pattern abspielen.</p></div>
+    <div><h3>Mix und Export</h3><p>Auto-Mix, LOUD-Schalter, Aufnahme als Audiodatei, Undo und Redo.</p></div>
+  </div>
+</section>
+
+<section id="szene">
+  <span class="tag">Zur Szene</span>
+  <h2>Was Hardtekk ausmacht</h2>
+  <div class="scene">
+    <div>
+      <p><b>Hardtekk</b> ist schnelle, kickzentrierte Tanzmusik aus der Rave- und Free-Party-Kultur. Tempo meist grob zwischen 160 und 200 BPM, ein hart verzerrter Kick auf jedem Viertel und darüber rhythmische Elemente, die den Druck halten.</p>
+      <p>Typisch ist der <b>Reverse-Bass</b>: Der Bass liegt zwischen den Kicks, also auf den Off-Beats, und lässt den Groove rollen. Dazu kommen scharfe Claps, Hats, Percussion, kurze Synth-Stabs und Rave-Sounds.</p>
+      <p>Verwandte Stile sind Tekk, Schranz und Hardcore. Die Grenzen sind fließend, deshalb gibt es im Beat-Generator drei Stile als Startpunkt.</p>
+      <p>Tipp für den Kick: Drive hoch für Biss, Länge kurz halten, damit der Bass Platz hat. Zu viel Pegel macht alles andere leise, dafür gibt es „Mix ausbalancieren".</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Stil</th><th>Start-BPM</th></tr></thead>
+        <tbody>
+          <tr><td>Schranz</td><td>165</td></tr>
+          <tr><td>Hardtekk</td><td>175</td></tr>
+          <tr><td>Rave</td><td>180</td></tr>
+          <tr><td>Reverse Bass</td><td>200</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;font-size:13px;color:var(--mute)">Das sind die Startwerte der Presets in der Groovebox. Du kannst das Tempo jederzeit ändern.</p>
+    </div>
+  </div>
+  <p class="warn"><b>Gehörschutz.</b> Hardtekk lebt von Lautstärke und Bass. Starte leise, vor allem mit Kopfhörern, und mach Pausen. Der LOUD-Schalter erhöht den Pegel deutlich.</p>
+</section>
+
+<section id="faq" class="faq">
+  <span class="tag">Fragen</span>
+  <h2>FAQ</h2>
+  <div style="margin-top:20px">
+    <details><summary>Muss ich etwas installieren oder mich anmelden?</summary><p>Nein. Die Seite läuft im Browser. Es gibt kein Konto.</p></details>
+    <details><summary>Wo werden meine Beats gespeichert?</summary><p>Nur auf deinem Gerät, im Speicher deines Browsers. Mit „Projekt speichern" und „WRITE" sicherst du den Stand. Wenn du die Website-Daten im Browser löschst, ist er weg. Nimm wichtige Beats als Audiodatei auf.</p></details>
+    <details><summary>Wie nehme ich einen Beat als Datei auf?</summary><p>In der Song-Leiste auf „Aufnehmen" tippen, spielen, wieder tippen. Die Datei landet auf dem iPad in der Dateien-App im Ordner Downloads.</p></details>
+    <details><summary>Der Ton ruckelt oder fehlt.</summary><p>Andere Apps und Tabs schließen, Stumm-Schalter prüfen, Seite neu laden. Bei sehr vielen Effekten hilft es, die Kaoss-Effekte zurückzusetzen.</p></details>
+    <details><summary>Darf ich meine Beats veröffentlichen?</summary><p>Beats, die nur aus den Klängen der Groovebox bestehen, sind deine eigene Arbeit. Bei Remixes fremder Songs siehe Abschnitt Urheberrecht unten.</p></details>
+  </div>
+</section>
+
+<section id="ideen">
+  <span class="tag">Mach mit</span>
+  <h2>Dein Vorschlag</h2>
+  <p class="lead">Was fehlt dir, was nervt, was soll besser klingen? Wähle aus, schreib kurz dazu und schick es ab. Der Vorschlag öffnet sich als vorbereitete Meldung auf GitHub. Dafür brauchst du ein GitHub-Konto, die Meldung ist dann öffentlich sichtbar.</p>
+  <form class="fb" id="fb">
+    <div class="chips" role="group" aria-label="Schnellauswahl">
+      <label><input type="checkbox" value="Längere Patterns (bis 64 Steps)"><span>Längere Patterns</span></label>
+      <label><input type="checkbox" value="Motion-Aufnahme für Regler"><span>Motion für Regler</span></label>
+      <label><input type="checkbox" value="Mehr Presets und Beat-Stile"><span>Mehr Presets</span></label>
+      <label><input type="checkbox" value="Mehr Kick-Sounds"><span>Mehr Kicks</span></label>
+      <label><input type="checkbox" value="Eigene Sound-Banks / Sample-Pads"><span>Sample-Pads</span></label>
+      <label><input type="checkbox" value="MIDI-Unterstützung"><span>MIDI</span></label>
+      <label><input type="checkbox" value="Beats teilen / Link-Export"><span>Beats teilen</span></label>
+      <label><input type="checkbox" value="Bessere Bedienung auf dem iPad"><span>Mehr iPad-Komfort</span></label>
+    </div>
+    <label for="fbcat" class="tag">Art</label>
+    <select id="fbcat"><option>Idee für eine neue Funktion</option><option>Fehler melden</option><option>Sound oder Mix verbessern</option><option>Design oder Bedienung</option><option>Sonstiges</option></select>
+    <label for="fbtxt" class="tag">Dein Text</label>
+    <textarea id="fbtxt" maxlength="1500" placeholder="Zum Beispiel: Ich wünsche mir einen zweiten Kick-Stil mit längerem Sub."></textarea>
+    <div class="btns">
+      <button class="btn" type="submit">Vorschlag senden</button>
+      <button class="btn alt" type="button" id="fbcopy">Text kopieren</button>
+    </div>
+    <div id="fbmsg" role="status"></div>
+    <small>Schreib keine privaten Daten in den Text. Alles auf GitHub ist öffentlich.</small>
+  </form>
+</section>
+
+<section id="recht">
+  <span class="tag">Rechtliches</span>
+  <h2>Urheberrecht und Datenschutz</h2>
+  <div class="legal">
+    <div>
+      <h3>Urheberrecht</h3>
+      <ul>
+        <li><b>Klänge:</b> Alle Sounds entstehen live durch Synthese in der Seite. Es sind keine Fremdsamples enthalten.</li>
+        <li><b>Eigene Songs und Samples:</b> Lade nur Material, an dem du die Rechte hast oder dessen Nutzung erlaubt ist.</li>
+        <li><b>Remixe:</b> Bearbeitungen fremder Aufnahmen und Kompositionen und deren Veröffentlichung brauchen in der Regel die Zustimmung der Rechteinhaber. Das gilt auch für Uploads auf Streaming- und Videoplattformen. Lizenzfreie oder ausdrücklich freigegebene Songs sind die sichere Wahl.</li>
+        <li><b>Diese Seite:</b> Gestaltung, Texte und Programmcode der Groovebox: © 2026 artstekke. Alle Rechte vorbehalten, soweit nicht anders angegeben.</li>
+        <li><b>Deine Beats:</b> Was du selbst mit der Groovebox baust und aufnimmst, gehört dir.</li>
+        <li><b>Marken:</b> Alle genannten Stilbezeichnungen sind Genrenamen. Diese Seite steht in keiner Verbindung zu Herstellern oder Künstlern. Gestaltung und Name sind eigenständig.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Datenschutz</h3>
+      <ul>
+        <li>Die Seite setzt kein Tracking ein, nutzt keine Cookies zur Analyse und lädt keine Schriften oder Skripte von Drittanbietern.</li>
+        <li>Projekte, Einstellungen und Part-Werte liegen nur lokal in deinem Browser (Local Storage).</li>
+        <li>Songs, die du lädst, werden im Browser verarbeitet und nicht hochgeladen.</li>
+        <li>Das Vorschlags-Formular sendet nichts an uns. Es öffnet eine vorbereitete Meldung auf GitHub, die du selbst absendest. Sie ist dort öffentlich sichtbar und unterliegt der Datenschutzerklärung von GitHub.</li>
+        <li>Beim Aufruf verarbeitet der Hosting-Anbieter technisch notwendige Daten wie die IP-Adresse in Server-Logs. Bei Hosting über GitHub Pages ist das GitHub, Inc. Details stehen in deren Datenschutzerklärung.</li>
+      </ul>
+    </div>
+    <div id="projekt">
+      <h3>Über das Projekt</h3>
+      <p>TEKK-16 ist ein privates, nicht-kommerzielles Hobbyprojekt von artstekke. Es gibt keine Werbung, keinen Verkauf und keine Anmeldung.</p>
+      <p>Kontakt, Fehlermeldungen und Wünsche: über das Formular „Dein Vorschlag" weiter oben auf der Seite.</p>
+    </div>
+  </div>
+</section>
+
+<footer><span>© 2026 artstekke · TEKK-16 · eigenständiges Projekt</span><a href="app.html">Zur Groovebox ▶</a></footer>
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+/* Mini-Groovebox */
+const R=[{n:"Kick",c:"#ff4a1c",p:[0,4,8,12]},{n:"Snare",c:"#ffb199",p:[4,12]},{n:"Hat",c:"#c9ff4a",p:[2,6,10,14]},{n:"Bass",c:"#6f9bff",p:[1,2,3,5,6,7,9,10,11,13,14,15]}];
+const st=R.map(r=>Array.from({length:16},(_,i)=>r.p.includes(i)));
+const pads=[];const grid=$("dgrid");
+R.forEach((r,ri)=>{
+  const row=document.createElement("div");row.className="row";
+  const l=document.createElement("span");l.textContent=r.n;row.appendChild(l);
+  for(let i=0;i<16;i++){
+    const b=document.createElement("button");b.type="button";b.className="pad";b.style.setProperty("--c",r.c);
+    b.setAttribute("aria-label",r.n+" Step "+(i+1));
+    const sync=()=>b.setAttribute("aria-pressed",st[ri][i]?"true":"false");sync();
+    b.onclick=()=>{st[ri][i]=!st[ri][i];sync();if(!ctx)return;if(!playing)hit(ri,ctx.currentTime+.01)};
+    b.sync=sync;row.appendChild(b);(pads[ri]=pads[ri]||[]).push(b);
+  }
+  grid.appendChild(row);
+});
+let ctx=null,master,an,noiseBuf,playing=false,bpm=175,step=0,next=0,timer=null,raf=0;
+function init(){
+  if(ctx)return true;
+  try{
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;
+    master=ctx.createGain();master.gain.value=.8;an=ctx.createAnalyser();an.fftSize=128;
+    master.connect(comp);comp.connect(an);an.connect(ctx.destination);
+    noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);
+    const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    return true;
+  }catch(e){ctx=null;return false}
+}
+const curve=(k)=>{const n=512,c=new Float32Array(n);for(let i=0;i<n;i++)c[i]=Math.tanh((i/(n-1)*2-1)*k);return c};
+const KC=curve(7);
+function noise(t,dur,type,f,out,g0){
+  const s=ctx.createBufferSource();s.buffer=noiseBuf;const f1=ctx.createBiquadFilter();f1.type=type;f1.frequency.value=f;
+  const g=ctx.createGain();g.gain.setValueAtTime(g0,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  s.connect(f1);f1.connect(g);g.connect(out);s.start(t);s.stop(t+dur+.02);
+}
+function hit(r,t){
+  if(r===0){
+    const o=ctx.createOscillator(),g=ctx.createGain(),w=ctx.createWaveShaper();w.curve=KC;
+    o.frequency.setValueAtTime(420,t);o.frequency.exponentialRampToValueAtTime(48,t+.1);
+    g.gain.setValueAtTime(.95,t);g.gain.exponentialRampToValueAtTime(.001,t+.34);
+    o.connect(w);w.connect(g);g.connect(master);o.start(t);o.stop(t+.36);
+  }else if(r===1){
+    noise(t,.16,"bandpass",1900,master,.7);
+    const o=ctx.createOscillator(),g=ctx.createGain();o.type="triangle";o.frequency.setValueAtTime(220,t);o.frequency.exponentialRampToValueAtTime(140,t+.08);
+    g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.12);o.connect(g);g.connect(master);o.start(t);o.stop(t+.14);
+  }else if(r===2){
+    noise(t,.05,"highpass",8000,master,.35);
+  }else{
+    const o=ctx.createOscillator(),f=ctx.createBiquadFilter(),g=ctx.createGain(),w=ctx.createWaveShaper();w.curve=curve(2.5);
+    o.type="sawtooth";o.frequency.value=43.65;f.type="lowpass";f.Q.value=6;
+    f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(140,t+.11);
+    g.gain.setValueAtTime(.55,t);g.gain.exponentialRampToValueAtTime(.001,t+.13);
+    o.connect(f);f.connect(w);w.connect(g);g.connect(master);o.start(t);o.stop(t+.15);
+  }
+}
+function tick(){
+  while(next<ctx.currentTime+.12){
+    const s=step,t=next;
+    for(let r=0;r<4;r++)if(st[r][s])hit(r,t);
+    const ms=Math.max(0,(t-ctx.currentTime)*1000);
+    setTimeout(()=>{
+      pads.forEach(row=>row.forEach((b,i)=>b.classList.toggle("now",i===s)));
+      if(st[0][s]){document.body.classList.add("thump");setTimeout(()=>document.body.classList.remove("thump"),90)}
+    },ms);
+    next+=60/bpm/4;step=(step+1)%16;
+  }
+}
+const cv=$("viz"),cx=cv.getContext("2d");
+function draw(){
+  const dpr=Math.min(2,devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;
+  if(cv.width!==Math.round(w*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
+  cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,w,h);
+  const n=an?an.frequencyBinCount:0,buf=new Uint8Array(n);if(an)an.getByteFrequencyData(buf);
+  const bars=48,bw=w/bars;
+  for(let b=0;b<bars;b++){
+    const v=n?buf[Math.min(n-1,Math.floor(Math.pow(b/bars,1.5)*n*.9))]/255:0,bh=Math.max(2,v*h);
+    cx.fillStyle=b%4===0?"#ff4a1c":"#ffb199";cx.fillRect(b*bw+1,h-bh,bw-2,bh);
+  }
+  if(playing)raf=requestAnimationFrame(draw);
+}
+draw();
+const pb=$("dplay");
+function start(){
+  if(!init())return;ctx.resume();
+  playing=true;step=0;next=ctx.currentTime+.06;timer=setInterval(tick,25);pb.textContent="■";pb.classList.add("on");cancelAnimationFrame(raf);draw();
+}
+function stop(){
+  playing=false;clearInterval(timer);pb.textContent="▶";pb.classList.remove("on");
+  pads.forEach(row=>row.forEach(b=>b.classList.remove("now")));
+}
+pb.onclick=()=>playing?stop():start();
+$("dbpm").oninput=e=>{bpm=+e.target.value;$("dbpmv").textContent=bpm};
+$("dclr").onclick=()=>{st.forEach(r=>r.fill(false));pads.forEach(r=>r.forEach(b=>b.sync()))};
+$("dprs").onclick=()=>{R.forEach((r,i)=>{st[i]=Array.from({length:16},(_,k)=>r.p.includes(k))});pads.forEach(r=>r.forEach(b=>b.sync()))};
+
+/* Vorschlags-Formular: öffnet vorbereitete GitHub-Meldung */
+const REPO="Artstekk/Groovebox";
+function build(){
+  const picks=[...document.querySelectorAll(".chips input:checked")].map(i=>"- "+i.value);
+  const cat=$("fbcat").value,txt=$("fbtxt").value.trim();
+  const body="**Art:** "+cat+"\n\n"+(picks.length?"**Gewünscht:**\n"+picks.join("\n")+"\n\n":"")+(txt?"**Text:**\n"+txt:"");
+  return {title:"[Vorschlag] "+(picks[0]?picks[0].slice(2):cat),body};
+}
+$("fb").onsubmit=e=>{
+  e.preventDefault();const m=$("fbmsg"),o=build();
+  if(!document.querySelector(".chips input:checked")&&!$("fbtxt").value.trim()){m.style.color="var(--hot2)";m.textContent="Wähle etwas aus oder schreib einen kurzen Text.";return}
+  const url="https://github.com/"+REPO+"/issues/new?title="+encodeURIComponent(o.title)+"&body="+encodeURIComponent(o.body.slice(0,5000));
+  m.style.color="var(--ok)";m.textContent="GitHub öffnet sich. Dort noch auf Submit new issue tippen.";
+  window.open(url,"_blank","noopener");
+};
+$("fbcopy").onclick=async()=>{
+  const m=$("fbmsg"),o=build(),t=o.title+"\n\n"+o.body;
+  try{await navigator.clipboard.writeText(t);m.style.color="var(--ok)";m.textContent="Text kopiert."}
+  catch(e){const ta=$("fbtxt");ta.focus();ta.select();m.style.color="var(--ok)";m.textContent="Markiert. Jetzt kopieren."}
+};
+})();
+</script>
+
+</body></html>
